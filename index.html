@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Shoals Property Services</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg:        #060608;
+  --s1:        #0d0d10;
+  --s2:        #121215;
+  --s3:        #18181c;
+  --s4:        #1e1e24;
+  --b1:        #27272f;
+  --b2:        #32323c;
+  --blue:      #2563eb;
+  --blue2:     #3b82f6;
+  --blue3:     #60a5fa;
+  --blue-a:    rgba(37,99,235,.12);
+  --blue-b:    rgba(37,99,235,.22);
+  --white:     #ffffff;
+  --w1:        #f4f4f5;
+  --w2:        #a1a1aa;
+  --w3:        #52525b;
+  --w4:        #3f3f46;
+  --green:     #22c55e;
+  --green-a:   rgba(34,197,94,.1);
+  --amber:     #f59e0b;
+  --amber-a:   rgba(245,158,11,.1);
+  --red:       #ef4444;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{background:var(--bg);color:var(--w1);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;padding-bottom:82px;}
+
+/* ══ HEADER ══════════════════════════════════ */
+.hdr{
+  height:54px;background:var(--s1);
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;position:sticky;top:0;z-index:500;
+}
+.hdr-brand{display:flex;align-items:center;gap:10px;}
+.hdr-icon{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--blue);display:flex;align-items:center;
+  justify-content:center;font-size:14px;flex-shrink:0;
+}
+.hdr-name{font-size:12px;font-weight:800;letter-spacing:.8px;color:var(--white);text-transform:uppercase;}
+.hdr-pill{
+  font-size:10px;font-weight:700;letter-spacing:.5px;
+  color:var(--blue3);background:var(--blue-a);
+  border:1px solid var(--blue-b);border-radius:20px;
+  padding:3px 10px;
+}
+
+/* ══ PROGRESS ════════════════════════════════ */
+.prog-shell{background:var(--s1);border-bottom:1px solid var(--b1);position:sticky;top:54px;z-index:499;}
+.prog-inner{display:flex;overflow:hidden;}
+.ps{
+  flex:1;text-align:center;padding:9px 1px 7px;
+  font-size:7.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--w4);border-bottom:2px solid transparent;
+  transition:all .18s;cursor:pointer;white-space:nowrap;overflow:hidden;
+}
+.ps.done{color:var(--blue);border-bottom-color:var(--blue);}
+.ps.active{color:var(--white);border-bottom-color:var(--blue2);}
+
+/* ══ LAYOUT ══════════════════════════════════ */
+.main{padding:22px 15px 12px;}
+.step{display:none;}
+.step.on{display:block;animation:up .2s ease both;}
+@keyframes up{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue2);margin-bottom:5px;}
+.page-title{font-size:25px;font-weight:900;letter-spacing:-.5px;line-height:1.1;color:var(--white);}
+.page-sub{font-size:13px;color:var(--w2);margin-top:5px;font-weight:400;line-height:1.4;}
+.page-head{margin-bottom:22px;}
+
+/* ══ CARD ════════════════════════════════════ */
+.card{background:var(--s2);border:1px solid var(--b1);border-radius:16px;padding:18px;margin-bottom:10px;}
+.card-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--w3);margin-bottom:14px;}
+
+/* ══ FIELDS ══════════════════════════════════ */
+.f{margin-bottom:13px;}
+.f:last-child{margin-bottom:0;}
+.f label{display:block;font-size:11px;font-weight:600;letter-spacing:.3px;color:var(--w2);margin-bottom:7px;}
+.f input,.f select,.f textarea{
+  width:100%;background:var(--s3);border:1px solid var(--b1);
+  border-radius:10px;color:var(--white);
+  font-family:'Inter',sans-serif;font-size:15px;font-weight:500;
+  padding:12px 14px;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+  -webkit-appearance:none;appearance:none;
+}
+.f input:focus,.f select:focus,.f textarea:focus{
+  border-color:var(--blue2);box-shadow:0 0 0 3px rgba(59,130,246,.15);
+}
+.f select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%2352525b' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;padding-right:34px;
+}
+.f select option{background:var(--s3);}
+.f textarea{resize:none;min-height:78px;line-height:1.6;}
+.f input::placeholder,.f textarea::placeholder{color:var(--w4);}
+
+/* ══ CREW ════════════════════════════════════ */
+.crew-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.cb{
+  background:var(--s3);border:1px solid var(--b1);border-radius:13px;
+  padding:16px 6px;text-align:center;cursor:pointer;
+  transition:all .13s;user-select:none;
+}
+.cb.on{border-color:var(--blue2);background:var(--blue-a);box-shadow:0 0 0 1px var(--blue);}
+.cb-n{font-size:28px;font-weight:900;line-height:1;color:var(--w1);}
+.cb.on .cb-n{color:var(--blue3);}
+.cb-r{font-size:9px;font-weight:700;letter-spacing:.3px;color:var(--w3);margin-top:5px;}
+.cb.on .cb-r{color:var(--blue3);}
+
+/* ══ HOURS ═══════════════════════════════════ */
+.hrs{
+  display:flex;align-items:center;background:var(--s3);
+  border:1px solid var(--b1);border-radius:13px;overflow:hidden;
+}
+.hbtn{
+  background:none;border:none;color:var(--w2);
+  font-size:24px;font-weight:200;width:66px;height:68px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:background .1s;
+}
+.hbtn:active{background:var(--b1);}
+.hval{flex:1;text-align:center;font-size:44px;font-weight:900;color:var(--blue3);letter-spacing:-1.5px;}
+.hunit{font-size:11px;font-weight:600;color:var(--w3);padding-right:16px;}
+
+/* ══ TRUCK ═══════════════════════════════════ */
+.truck-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.tb{
+  background:var(--s3);border:1px solid var(--b1);border-radius:13px;
+  padding:14px 12px;cursor:pointer;transition:all .13s;user-select:none;
+}
+.tb.on{border-color:var(--blue2);background:var(--blue-a);box-shadow:0 0 0 1px var(--blue);}
+.tb-sz{font-size:17px;font-weight:800;color:var(--white);}
+.tb.on .tb-sz{color:var(--blue3);}
+.tb-d{font-size:10px;color:var(--w3);margin-top:5px;line-height:1.5;}
+.tb.on .tb-d{color:var(--blue3);}
+
+.est-box{background:var(--s3);border:1px solid var(--b1);border-radius:12px;overflow:hidden;}
+.er{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 14px;border-bottom:1px solid var(--b1);font-size:13px;
+}
+.er:last-child{border:none;background:var(--s4);}
+.er span:first-child{color:var(--w2);}
+.er span:last-child{color:var(--white);font-weight:600;}
+.er:last-child span:last-child{color:var(--blue3);font-size:16px;font-weight:800;}
+
+/* ══ TOTAL CARD ══════════════════════════════ */
+.big-total{
+  background:var(--blue);border-radius:16px;
+  padding:26px 20px 22px;margin-bottom:10px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.big-total::before{
+  content:'';position:absolute;width:220px;height:220px;border-radius:50%;
+  background:rgba(255,255,255,.04);bottom:-80px;right:-60px;
+}
+.bt-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:6px;}
+.bt-amt{font-size:60px;font-weight:900;letter-spacing:-2px;line-height:1;color:var(--white);}
+.bt-sub{font-size:12px;color:rgba(255,255,255,.4);margin-top:9px;line-height:2;}
+
+.bd-box{background:var(--s2);border:1px solid var(--b1);border-radius:14px;overflow:hidden;}
+.bd-r{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:13px 16px;border-bottom:1px solid var(--b1);font-size:13px;
+}
+.bd-r:last-child{border:none;background:var(--s3);font-weight:700;font-size:15px;}
+.bd-r span:first-child{color:var(--w2);}
+.bd-r span:last-child{color:var(--w1);font-weight:600;}
+.bd-r:last-child span:last-child{color:var(--blue3);font-size:17px;}
+
+/* ══ SERVICES ════════════════════════════════ */
+.svc-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.svb{
+  background:var(--s3);border:1px solid var(--b1);border-radius:13px;
+  padding:13px 10px;display:flex;align-items:center;gap:9px;
+  cursor:pointer;transition:all .13s;user-select:none;
+}
+.svb.on{border-color:var(--blue2);background:var(--blue-a);}
+.svb-ico{font-size:18px;flex-shrink:0;}
+.svb-lbl{font-size:12px;font-weight:600;line-height:1.3;flex:1;color:var(--w1);}
+.svb.on .svb-lbl{color:var(--blue3);}
+.svb-dot{
+  width:17px;height:17px;border-radius:50%;
+  border:1.5px solid var(--w4);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;color:transparent;transition:all .13s;
+}
+.svb.on .svb-dot{background:var(--blue2);border-color:var(--blue2);color:#fff;}
+
+/* ══ PAYMENT ═════════════════════════════════ */
+.pay-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.pb{
+  background:var(--s3);border:1px solid var(--b1);border-radius:13px;
+  padding:13px 5px;text-align:center;cursor:pointer;
+  transition:all .13s;user-select:none;
+}
+.pb.on{border-color:var(--blue2);background:var(--blue-a);}
+.pb-ico{font-size:18px;margin-bottom:5px;}
+.pb-lbl{font-size:11px;font-weight:700;color:var(--w2);}
+.pb.on .pb-lbl{color:var(--blue3);}
+
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.stb{
+  background:var(--s3);border:1px solid var(--b1);border-radius:13px;
+  padding:18px 8px;text-align:center;cursor:pointer;
+  transition:all .13s;user-select:none;
+  font-size:12px;font-weight:700;color:var(--w3);line-height:1.6;
+}
+.stb.paid{border-color:var(--green);background:var(--green-a);color:var(--green);}
+.stb.owed{border-color:var(--amber);background:var(--amber-a);color:var(--amber);}
+
+/* ══ PHOTOS ══════════════════════════════════ */
+.photo-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pzone{
+  background:var(--s2);border:1px dashed var(--b2);border-radius:14px;
+  padding:20px 10px;text-align:center;cursor:pointer;
+  transition:all .15s;user-select:none;
+}
+.pzone:active{border-color:var(--blue2);background:var(--blue-a);}
+.pzone input{display:none;}
+.pz-ico{font-size:28px;margin-bottom:7px;}
+.pz-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue3);}
+.pz-hint{font-size:10px;color:var(--w4);margin-top:3px;}
+.pz-cnt{font-size:12px;font-weight:700;color:var(--green);margin-top:6px;min-height:16px;}
+.thumb-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.pt{position:relative;width:56px;height:56px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid var(--b1);}
+.pt img{width:100%;height:100%;object-fit:cover;display:block;}
+.pdel{
+  position:absolute;top:2px;right:2px;
+  background:rgba(0,0,0,.85);border:none;color:var(--white);
+  width:17px;height:17px;border-radius:50%;font-size:10px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+
+/* ══ SIGNATURE ═══════════════════════════════ */
+.sig-outer{background:var(--s3);border:1px solid var(--b1);border-radius:13px;overflow:hidden;}
+.sig-cvs-wrap{position:relative;}
+#sigCanvas{display:block;width:100%;height:165px;cursor:crosshair;touch-action:none;background:var(--s3);}
+.sig-ghost{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  gap:6px;font-size:13px;color:var(--w4);pointer-events:none;font-weight:500;
+}
+.sig-foot{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-top:1px solid var(--b1);}
+.sig-status{font-size:11px;color:var(--w3);font-style:italic;}
+.sig-clr{
+  background:none;border:1px solid var(--b2);border-radius:7px;
+  color:var(--w2);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;
+  padding:6px 13px;cursor:pointer;transition:all .12s;
+}
+.sig-clr:active{border-color:var(--blue2);color:var(--blue3);}
+
+/* ══ UTILITY ═════════════════════════════════ */
+.hint{font-size:11px;color:var(--w4);text-align:center;margin-top:10px;}
+.rule{height:1px;background:var(--b1);margin:14px 0;}
+
+/* ══ BOTTOM NAV ══════════════════════════════ */
+.bot{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(6,6,8,.95);border-top:1px solid var(--b1);
+  backdrop-filter:blur(24px);
+  padding:10px 15px;display:flex;gap:10px;z-index:600;
+}
+.btn-back{
+  background:var(--s2);border:1px solid var(--b1);border-radius:12px;
+  color:var(--w2);font-family:'Inter',sans-serif;font-weight:700;font-size:13px;
+  padding:14px 18px;cursor:pointer;flex-shrink:0;display:none;transition:all .12s;
+}
+.btn-back:active{border-color:var(--blue);color:var(--white);}
+.btn-next{
+  flex:1;background:var(--blue);border:none;border-radius:12px;
+  color:var(--white);font-family:'Inter',sans-serif;font-weight:800;font-size:15px;
+  letter-spacing:.3px;padding:14px;cursor:pointer;transition:background .12s;
+}
+.btn-next:active{background:#1d4ed8;}
+.btn-save{
+  flex:1;border:none;border-radius:12px;
+  background:var(--white);color:var(--bg);
+  font-family:'Inter',sans-serif;font-weight:900;font-size:15px;
+  letter-spacing:.3px;padding:14px;cursor:pointer;transition:all .12s;
+}
+.btn-save:active{background:#e4e4e7;}
+
+/* ══ TOAST ═══════════════════════════════════ */
+.toast{
+  position:fixed;bottom:76px;left:50%;
+  transform:translateX(-50%) translateY(6px);
+  background:var(--s3);border:1px solid var(--b2);
+  color:var(--white);font-size:13px;font-weight:600;
+  padding:10px 20px;border-radius:30px;
+  opacity:0;transition:all .22s;z-index:700;
+  pointer-events:none;white-space:nowrap;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.ok{background:#052e16;border-color:var(--green);color:#4ade80;}
+.toast.err{background:#450a0a;border-color:var(--red);color:#fca5a5;}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-icon">🏠</div>
+    <span class="hdr-name">Shoals Property Services</span>
+  </div>
+  <span class="hdr-pill">Receipt</span>
+</header>
+
+<!-- ── PROGRESS ── -->
+<div class="prog-shell">
+  <div class="prog-inner" id="prog"></div>
+</div>
+
+<main class="main">
+
+  <!-- 0 · CUSTOMER -->
+  <div class="step on" id="s0">
+    <div class="page-head">
+      <div class="eyebrow">Step 1 of 9</div>
+      <div class="page-title">Customer</div>
+      <div class="page-sub">Who are we moving today?</div>
+    </div>
+    <div class="card">
+      <div class="f"><label>Full Name *</label><input id="custName" type="text" placeholder="First & Last Name" autocomplete="name"></div>
+      <div class="f"><label>Phone Number</label><input id="custPhone" type="tel" placeholder="256-000-0000" autocomplete="tel"></div>
+      <div class="f"><label>Email (optional)</label><input id="custEmail" type="email" placeholder="customer@email.com" inputmode="email"></div>
+    </div>
+  </div>
+
+  <!-- 1 · JOB -->
+  <div class="step" id="s1">
+    <div class="page-head">
+      <div class="eyebrow">Step 2 of 9</div>
+      <div class="page-title">Job Details</div>
+      <div class="page-sub">Date and locations</div>
+    </div>
+    <div class="card">
+      <div class="f"><label>Job Date</label><input id="jobDate" type="date"></div>
+      <div class="f"><label>Pickup Address</label><input id="addrFrom" type="text" placeholder="123 Main St, Florence AL"></div>
+      <div class="f"><label>Drop-off Address</label><input id="addrTo" type="text" placeholder="456 Oak Ave, Muscle Shoals AL"></div>
+      <div class="f"><label>Notes (optional)</label><textarea id="notes" placeholder="Stairs, fragile items, anything special..."></textarea></div>
+    </div>
+  </div>
+
+  <!-- 2 · CREW -->
+  <div class="step" id="s2">
+    <div class="page-head">
+      <div class="eyebrow">Step 3 of 9</div>
+      <div class="page-title">Crew & Hours</div>
+      <div class="page-sub">Select size then set hours worked</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Movers on this job</div>
+      <div class="crew-row">
+        <div class="cb" data-n="1" data-r="85"  onclick="setCrew(this)"><div class="cb-n">1</div><div class="cb-r">$85/hr</div></div>
+        <div class="cb on" data-n="2" data-r="125" onclick="setCrew(this)"><div class="cb-n">2</div><div class="cb-r">$125/hr</div></div>
+        <div class="cb" data-n="3" data-r="165" onclick="setCrew(this)"><div class="cb-n">3</div><div class="cb-r">$165/hr</div></div>
+        <div class="cb" data-n="4" data-r="200" onclick="setCrew(this)"><div class="cb-n">4</div><div class="cb-r">$200/hr</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Hours worked</div>
+      <div class="hrs">
+        <button class="hbtn" onclick="adjH(-0.5)">−</button>
+        <div class="hval" id="hDisp">2</div>
+        <div class="hunit">hrs</div>
+        <button class="hbtn" onclick="adjH(0.5)">+</button>
+      </div>
+      <p class="hint">2 hour minimum charge</p>
+    </div>
+  </div>
+
+  <!-- 3 · TRUCK -->
+  <div class="step" id="s3">
+    <div class="page-head">
+      <div class="eyebrow">Step 4 of 9</div>
+      <div class="page-title">Truck Fee</div>
+      <div class="page-sub">Exact U-Haul cost passed to the customer</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Truck size</div>
+      <div class="truck-row">
+        <div class="tb on" data-sz="10 ft" data-base="19.95" onclick="setTruck(this)"><div class="tb-sz">10 ft</div><div class="tb-d">Studio / 1BR<br>$19.95 base</div></div>
+        <div class="tb"    data-sz="15 ft" data-base="29.95" onclick="setTruck(this)"><div class="tb-sz">15 ft</div><div class="tb-d">2BR home<br>$29.95 base</div></div>
+        <div class="tb"    data-sz="20 ft" data-base="39.95" onclick="setTruck(this)"><div class="tb-sz">20 ft</div><div class="tb-d">3–4BR home<br>$39.95 base</div></div>
+        <div class="tb"    data-sz="26 ft" data-base="49.95" onclick="setTruck(this)"><div class="tb-sz">26 ft</div><div class="tb-d">Large home<br>$49.95 base</div></div>
+      </div>
+      <div class="rule"></div>
+      <div class="f"><label>Round-Trip Miles</label><input id="miles" type="number" inputmode="decimal" placeholder="e.g. 20" min="0" oninput="calcTruck()"></div>
+      <div class="f"><label>Gas Price / Gallon ($)</label><input id="gas" type="number" inputmode="decimal" step="0.01" value="3.29" oninput="calcTruck()"></div>
+      <div class="rule"></div>
+      <div class="est-box">
+        <div class="er"><span>U-Haul Base Rate</span><span id="te-base">$19.95</span></div>
+        <div class="er"><span>Mileage ($0.99/mi)</span><span id="te-miles">—</span></div>
+        <div class="er"><span>Fuel Est. (10 MPG)</span><span id="te-fuel">—</span></div>
+        <div class="er"><span>Environmental Fee</span><span>$5.00</span></div>
+        <div class="er"><span>Truck Total</span><span id="te-total">$24.95</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 · TOTAL -->
+  <div class="step" id="s4">
+    <div class="page-head">
+      <div class="eyebrow">Step 5 of 9</div>
+      <div class="page-title">Total Charge</div>
+      <div class="page-sub">Review before moving on</div>
+    </div>
+    <div class="big-total">
+      <div class="bt-lbl">Total Due</div>
+      <div class="bt-amt" id="liveAmt">$0.00</div>
+      <div class="bt-sub" id="liveSub"></div>
+    </div>
+    <div class="bd-box" id="bdBox"></div>
+  </div>
+
+  <!-- 5 · SERVICES -->
+  <div class="step" id="s5">
+    <div class="page-head">
+      <div class="eyebrow">Step 6 of 9</div>
+      <div class="page-title">Services</div>
+      <div class="page-sub">Tap everything done on this job</div>
+    </div>
+    <div class="card">
+      <div class="svc-row">
+        <div class="svb on" data-s="House Move"          onclick="togS(this)"><span class="svb-ico">🏠</span><span class="svb-lbl">House Move</span><span class="svb-dot">✓</span></div>
+        <div class="svb"    data-s="Apartment Move"      onclick="togS(this)"><span class="svb-ico">🏢</span><span class="svb-lbl">Apartment Move</span><span class="svb-dot">✓</span></div>
+        <div class="svb"    data-s="Loading & Unloading" onclick="togS(this)"><span class="svb-ico">📦</span><span class="svb-lbl">Loading & Unloading</span><span class="svb-dot">✓</span></div>
+        <div class="svb"    data-s="Property Cleanout"   onclick="togS(this)"><span class="svb-ico">🧹</span><span class="svb-lbl">Property Cleanout</span><span class="svb-dot">✓</span></div>
+        <div class="svb"    data-s="Junk Removal"        onclick="togS(this)"><span class="svb-ico">🗑️</span><span class="svb-lbl">Junk Removal</span><span class="svb-dot">✓</span></div>
+        <div class="svb"    data-s="Furniture Moving"    onclick="togS(this)"><span class="svb-ico">🛋️</span><span class="svb-lbl">Furniture Moving</span><span class="svb-dot">✓</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 · PAYMENT -->
+  <div class="step" id="s6">
+    <div class="page-head">
+      <div class="eyebrow">Step 7 of 9</div>
+      <div class="page-title">Payment</div>
+      <div class="page-sub">How did the customer pay?</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Method</div>
+      <div class="pay-row">
+        <div class="pb" data-p="Cash"     onclick="setPay(this)"><div class="pb-ico">💵</div><div class="pb-lbl">Cash</div></div>
+        <div class="pb" data-p="Zelle"    onclick="setPay(this)"><div class="pb-ico">💜</div><div class="pb-lbl">Zelle</div></div>
+        <div class="pb" data-p="Venmo"    onclick="setPay(this)"><div class="pb-ico">💙</div><div class="pb-lbl">Venmo</div></div>
+        <div class="pb" data-p="Cash App" onclick="setPay(this)"><div class="pb-ico">💚</div><div class="pb-lbl">Cash App</div></div>
+        <div class="pb" data-p="Check"    onclick="setPay(this)"><div class="pb-ico">📝</div><div class="pb-lbl">Check</div></div>
+        <div class="pb" data-p="Card"     onclick="setPay(this)"><div class="pb-ico">💳</div><div class="pb-lbl">Card</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Status</div>
+      <div class="stat-row">
+        <div class="stb paid" id="stPaid" onclick="setStat('paid')">✅ Paid in Full</div>
+        <div class="stb"      id="stOwed" onclick="setStat('owed')">⚠️ Balance Owed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 · PHOTOS -->
+  <div class="step" id="s7">
+    <div class="page-head">
+      <div class="eyebrow">Step 8 of 9</div>
+      <div class="page-title">Photos</div>
+      <div class="page-sub">Before & after — protects you and the customer</div>
+    </div>
+    <div class="photo-cols">
+      <div>
+        <div class="pzone" onclick="document.getElementById('bfIn').click()">
+          <div class="pz-ico">📷</div>
+          <div class="pz-lbl">Before</div>
+          <div class="pz-hint">Tap to add</div>
+          <div class="pz-cnt" id="bfCnt"></div>
+          <input id="bfIn" type="file" multiple accept="image/*" onchange="addPhotos('bf',this)">
+        </div>
+        <div class="thumb-row" id="bfThumbs"></div>
+      </div>
+      <div>
+        <div class="pzone" onclick="document.getElementById('afIn').click()">
+          <div class="pz-ico">🏠</div>
+          <div class="pz-lbl">After</div>
+          <div class="pz-hint">Tap to add</div>
+          <div class="pz-cnt" id="afCnt"></div>
+          <input id="afIn" type="file" multiple accept="image/*" onchange="addPhotos('af',this)">
+        </div>
+        <div class="thumb-row" id="afThumbs"></div>
+      </div>
+    </div>
+    <p class="hint" style="margin-top:14px">Photos optional but highly recommended</p>
+  </div>
+
+  <!-- 8 · SIGN -->
+  <div class="step" id="s8">
+    <div class="page-head">
+      <div class="eyebrow">Step 9 of 9</div>
+      <div class="page-title">Customer Signature</div>
+      <div class="page-sub">Hand the phone to the customer</div>
+    </div>
+    <div class="card">
+      <div class="sig-outer">
+        <div class="sig-cvs-wrap">
+          <canvas id="sigCanvas"></canvas>
+          <div class="sig-ghost" id="sigGhost">✍️ &nbsp;Sign here with your finger</div>
+        </div>
+        <div class="sig-foot">
+          <span class="sig-status" id="sigStatus">Awaiting signature</span>
+          <button class="sig-clr" onclick="clearSig()">Clear</button>
+        </div>
+      </div>
+      <p class="hint">Signature is optional</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── NAV ── -->
+<div class="bot">
+  <button class="btn-back" id="navBack" onclick="prev()">← Back</button>
+  <button class="btn-next" id="navBtn"  onclick="next()">Continue →</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const { jsPDF } = window.jspdf;
+
+// ── STATE ──────────────────────────────────────
+let step=0, TOTAL=9;
+const LABELS=['Customer','Job','Crew','Truck','Total','Services','Payment','Photos','Sign'];
+let crewCount=2, crewRate=125, hours=2;
+let truckBase=19.95, truckSize='10 ft', truckTotal=0;
+let payMethod='', payStatus='paid';
+let bfPhotos=[], afPhotos=[];
+let sigCtx=null, sigDrawing=false, sigHas=false;
+
+// ── PROGRESS ───────────────────────────────────
+(()=>{
+  const p=document.getElementById('prog');
+  LABELS.forEach((l,i)=>{
+    const d=document.createElement('div');
+    d.className='ps'+(i===0?' active':'');
+    d.textContent=l; d.onclick=()=>goStep(i);
+    p.appendChild(d);
+  });
+})();
+function updProg(){
+  document.querySelectorAll('.ps').forEach((el,i)=>{
+    el.className='ps'+(i===step?' active':i<step?' done':'');
+  });
+}
+
+// ── NAV ────────────────────────────────────────
+function goStep(n){
+  document.getElementById('s'+step).classList.remove('on');
+  step=n;
+  document.getElementById('s'+step).classList.add('on');
+  updProg();
+  const btn=document.getElementById('navBtn');
+  document.getElementById('navBack').style.display=step===0?'none':'block';
+  if(step===TOTAL-1){btn.textContent='⬇  Save Receipt';btn.className='btn-save';}
+  else{btn.textContent='Continue →';btn.className='btn-next';}
+  if(step===4) buildTotal();
+  if(step===8) setTimeout(initSig,80);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function next(){
+  if(step===0&&!document.getElementById('custName').value.trim()){toast('Please enter a customer name','err');return;}
+  if(step<TOTAL-1)goStep(step+1);else makePDF();
+}
+function prev(){if(step>0)goStep(step-1);}
+
+// ── CREW ───────────────────────────────────────
+function setCrew(el){
+  document.querySelectorAll('.cb').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  crewCount=parseInt(el.dataset.n); crewRate=parseInt(el.dataset.r);
+}
+
+// ── HOURS ──────────────────────────────────────
+function adjH(d){
+  hours=Math.max(2,Math.round((hours+d)*2)/2);
+  document.getElementById('hDisp').textContent=hours%1===0?hours:hours.toFixed(1);
+}
+
+// ── TRUCK ──────────────────────────────────────
+function setTruck(el){
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on'); truckBase=parseFloat(el.dataset.base); truckSize=el.dataset.sz; calcTruck();
+}
+function calcTruck(){
+  const mi=parseFloat(document.getElementById('miles').value)||0;
+  const gas=parseFloat(document.getElementById('gas').value)||3.29;
+  const mc=mi*0.99, fc=(mi/10)*gas;
+  truckTotal=truckBase+mc+fc+5;
+  document.getElementById('te-base').textContent='$'+truckBase.toFixed(2);
+  document.getElementById('te-miles').textContent=mi?'$'+mc.toFixed(2)+' ('+mi+' mi)':'—';
+  document.getElementById('te-fuel').textContent=mi?'$'+fc.toFixed(2):'—';
+  document.getElementById('te-total').textContent='$'+truckTotal.toFixed(2);
+}
+
+// ── TOTAL ──────────────────────────────────────
+function buildTotal(){
+  const labor=crewRate*hours, grand=labor+truckTotal;
+  const f=n=>'$'+n.toFixed(2);
+  document.getElementById('liveAmt').textContent=f(grand);
+  document.getElementById('liveSub').innerHTML=
+    hours+' hr'+(hours!==1?'s':'')+' @ $'+crewRate+'/hr &nbsp;·&nbsp; '+truckSize+' truck $'+truckTotal.toFixed(2);
+  document.getElementById('bdBox').innerHTML=
+    '<div class="bd-r"><span>Labor ('+hours+' hrs @ $'+crewRate+'/hr)</span><span>'+f(labor)+'</span></div>'+
+    '<div class="bd-r"><span>Truck ('+truckSize+' U-Haul)</span><span>'+f(truckTotal)+'</span></div>'+
+    '<div class="bd-r"><span>Total</span><span>'+f(grand)+'</span></div>';
+}
+
+// ── SERVICES ───────────────────────────────────
+function togS(el){el.classList.toggle('on');}
+
+// ── PAYMENT ────────────────────────────────────
+function setPay(el){document.querySelectorAll('.pb').forEach(b=>b.classList.remove('on'));el.classList.add('on');payMethod=el.dataset.p;}
+function setStat(s){
+  payStatus=s;
+  document.getElementById('stPaid').className='stb'+(s==='paid'?' paid':'');
+  document.getElementById('stOwed').className='stb'+(s==='owed'?' owed':'');
+}
+
+// ── PHOTOS ─────────────────────────────────────
+function addPhotos(type,inp){
+  const store=type==='bf'?bfPhotos:afPhotos;
+  const thumbs=document.getElementById(type+'Thumbs');
+  const cnt=document.getElementById(type+'Cnt');
+  Array.from(inp.files).forEach(file=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      const idx=store.length; store.push(e.target.result);
+      const d=document.createElement('div');d.className='pt';
+      d.innerHTML=`<img src="${e.target.result}"><button class="pdel" onclick="delPhoto('${type}',${idx},this)">×</button>`;
+      thumbs.appendChild(d);
+      cnt.textContent=store.length+' photo'+(store.length!==1?'s':'');
+    };
+    r.readAsDataURL(file);
+  });
+}
+function delPhoto(type,idx,btn){
+  (type==='bf'?bfPhotos:afPhotos).splice(idx,1);
+  btn.closest('.pt').remove();
+  const c=document.getElementById(type+'Cnt');
+  const s=type==='bf'?bfPhotos:afPhotos;
+  c.textContent=s.length?s.length+' photo'+(s.length!==1?'s':''):'';
+}
+
+// ── SIGNATURE ──────────────────────────────────
+function initSig(){
+  const c=document.getElementById('sigCanvas');
+  if(sigCtx)return;
+  const dpr=window.devicePixelRatio||1;
+  const W=c.offsetWidth, H=165;
+  c.width=W*dpr; c.height=H*dpr;
+  c.style.width=W+'px'; c.style.height=H+'px';
+  sigCtx=c.getContext('2d');
+  sigCtx.scale(dpr,dpr);
+  sigCtx.strokeStyle='#3b82f6'; sigCtx.lineWidth=2.5; sigCtx.lineCap='round'; sigCtx.lineJoin='round';
+  const pos=e=>{const r=c.getBoundingClientRect();return e.touches?{x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top}:{x:e.clientX-r.left,y:e.clientY-r.top};};
+  const start=e=>{e.preventDefault();sigDrawing=true;const p=pos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);};
+  const draw=e=>{
+    e.preventDefault();if(!sigDrawing)return;
+    const p=pos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);
+    if(!sigHas){sigHas=true;document.getElementById('sigGhost').style.display='none';const s=document.getElementById('sigStatus');s.textContent='✓ Signed';s.style.color='#4ade80';}
+  };
+  const end=e=>{e.preventDefault();sigDrawing=false;};
+  c.addEventListener('mousedown',start,{passive:false});c.addEventListener('mousemove',draw,{passive:false});
+  c.addEventListener('mouseup',end,{passive:false});c.addEventListener('mouseleave',end,{passive:false});
+  c.addEventListener('touchstart',start,{passive:false});c.addEventListener('touchmove',draw,{passive:false});c.addEventListener('touchend',end,{passive:false});
+}
+function clearSig(){
+  if(!sigCtx)return;
+  const c=document.getElementById('sigCanvas');
+  sigCtx.clearRect(0,0,c.width,c.height); sigHas=false;
+  document.getElementById('sigGhost').style.display='flex';
+  const s=document.getElementById('sigStatus'); s.textContent='Awaiting signature'; s.style.color='';
+}
+
+// ── TOAST ──────────────────────────────────────
+function toast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show'+(type==='err'?' err':type==='ok'?' ok':'');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.className='toast',2800);
+}
+
+// ── PDF ────────────────────────────────────────
+async function makePDF(){
+  toast('Building receipt…');
+  await new Promise(r=>setTimeout(r,60));
+
+  const doc=new jsPDF({unit:'pt',format:'letter',orientation:'portrait'});
+  const PW=612,PH=792,ML=44,MR=44,CW=612-44-44;
+  let y=0;
+
+  const get=id=>document.getElementById(id).value;
+  const name=get('custName')||'Customer';
+  const phone=get('custPhone'), email=get('custEmail');
+  const dateRaw=get('jobDate'), addrFrom=get('addrFrom'), addrTo=get('addrTo'), notes=get('notes');
+  const dateStr=dateRaw
+    ?new Date(dateRaw+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})
+    :new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const labor=crewRate*hours, grand=labor+truckTotal;
+  const fmt=n=>'$'+parseFloat(n).toFixed(2);
+  const svcs=[...document.querySelectorAll('.svb.on')].map(b=>b.dataset.s);
+  const sigData=sigHas?document.getElementById('sigCanvas').toDataURL('image/png'):null;
+  const isPaid=payStatus==='paid';
+
+  // ── PDF HEADER ──
+  doc.setFillColor(6,6,8);
+  doc.rect(0,0,PW,68,'F');
+  doc.setFillColor(37,99,235);
+  doc.rect(0,0,4,68,'F');
+  doc.setFillColor(37,99,235);
+  doc.rect(0,66,PW,2,'F');
+
+  doc.setFont('helvetica','bold');doc.setFontSize(19);doc.setTextColor(255,255,255);
+  doc.text('SHOALS PROPERTY SERVICES',ML+6,26);
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(82,82,91);
+  doc.text('We Move It.  ·  We Remove It.  ·  You Relax.',ML+6,42);
+
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(255,255,255);
+  doc.text('256-951-1763',PW-MR,26,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(82,82,91);
+  doc.text('Muscle Shoals, Alabama',PW-MR,40,{align:'right'});
+  doc.text(dateStr,PW-MR,54,{align:'right'});
+  y=80;
+
+  // ── CUSTOMER + JOB CARDS ──
+  const half=(CW/2)-6;
+
+  // Customer card
+  doc.setFillColor(17,17,21);
+  doc.roundedRect(ML,y,half,80,4,4,'F');
+  doc.setFillColor(37,99,235);
+  doc.rect(ML,y,3,80,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(82,82,91);
+  doc.text('CUSTOMER',ML+11,y+14);
+  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(244,244,245);
+  doc.text(name,ML+11,y+30);
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(113,113,122);
+  let cy=y+44;
+  if(phone){doc.text(phone,ML+11,cy);cy+=13;}
+  if(email){doc.text(doc.splitTextToSize(email,half-14)[0],ML+11,cy);}
+
+  // Job card
+  const rx=ML+half+12;
+  doc.setFillColor(17,17,21);
+  doc.roundedRect(rx,y,half,80,4,4,'F');
+  doc.setFillColor(37,99,235);
+  doc.rect(rx,y,3,80,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(82,82,91);
+  doc.text('JOB INFO',rx+11,y+14);
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(244,244,245);
+  doc.text(crewCount+' Mover'+(crewCount>1?'s':'')+' · '+hours+' Hour'+(hours!==1?'s':''),rx+11,y+30);
+  doc.setTextColor(113,113,122);
+  if(addrFrom){doc.text(doc.splitTextToSize('From: '+addrFrom,half-14)[0],rx+11,y+44);}
+  if(addrTo){doc.text(doc.splitTextToSize('To:     '+addrTo,half-14)[0],rx+11,y+57);}
+  y+=94;
+
+  // ── SERVICES ──
+  if(svcs.length){
+    doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(82,82,91);
+    doc.text('SERVICES PERFORMED',ML,y+8);
+    y+=16;
+    let sx=ML,sy=y;
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);
+    svcs.forEach(s=>{
+      const sw=doc.getTextWidth(s)+16;
+      if(sx+sw>PW-MR){sx=ML;sy+=19;}
+      doc.setFillColor(37,99,235);doc.roundedRect(sx,sy-10,sw,14,7,7,'F');
+      doc.setTextColor(255,255,255);doc.text(s,sx+8,sy);
+      sx+=sw+5;
+    });
+    y=sy+14;
+  }
+
+  // ── CHARGES TABLE ──
+  y+=6;
+  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(82,82,91);
+  doc.text('CHARGES',ML,y+8);
+  y+=16;
+
+  // Header
+  doc.setFillColor(13,13,16);
+  doc.rect(ML,y,CW,24,'F');
+  doc.setFillColor(37,99,235);doc.rect(ML,y,CW,2,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);
+  doc.text('Description',ML+10,y+15);
+  doc.text('Detail',ML+208,y+15);
+  doc.text('Amount',PW-MR-10,y+15,{align:'right'});
+  y+=24;
+
+  // Rows
+  [['Labor',hours+' hr'+(hours!==1?'s':'')+' @ $'+crewRate+'/hr',fmt(labor)],
+   ['Truck ('+truckSize+')','Base + mileage + fuel',fmt(truckTotal)]
+  ].forEach((r,i)=>{
+    doc.setFillColor(i%2===0?22:18,i%2===0?22:18,i%2===0?27:22);
+    doc.rect(ML,y,CW,28,'F');
+    doc.setFillColor(39,39,47);doc.rect(ML,y+27,CW,1,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(228,228,231);
+    doc.text(r[0],ML+10,y+17);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(82,82,91);
+    doc.text(r[1],ML+208,y+17);
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(228,228,231);
+    doc.text(r[2],PW-MR-10,y+17,{align:'right'});
+    y+=28;
+  });
+
+  // Total bar
+  doc.setFillColor(37,99,235);doc.rect(ML,y,CW,36,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(10.5);doc.setTextColor(255,255,255);
+  doc.text('TOTAL DUE',ML+10,y+22);
+  doc.setFontSize(16);doc.text(fmt(grand),PW-MR-10,y+22,{align:'right'});
+  y+=46;
+
+  // ── PAYMENT STATUS ──
+  const [bgR,bgG,bgB]=isPaid?[5,46,22]:[69,26,3];
+  const [txR,txG,txB]=isPaid?[74,222,128]:[251,191,36];
+  doc.setFillColor(bgR,bgG,bgB);doc.roundedRect(ML,y,CW,28,3,3,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(txR,txG,txB);
+  doc.text((isPaid?'✓  Paid in Full':'⚠  Balance Owed')+(payMethod?'   ·   '+payMethod:''),PW/2,y+17.5,{align:'center'});
+  y+=38;
+
+  // ── NOTES ──
+  if(notes){
+    const nl=doc.splitTextToSize(notes,CW-22);
+    const nh=nl.length*13+22;
+    doc.setFillColor(17,17,21);doc.roundedRect(ML,y,CW,nh,3,3,'F');
+    doc.setFillColor(37,99,235);doc.rect(ML,y,3,nh,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(82,82,91);
+    doc.text('NOTES',ML+11,y+12);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(161,161,170);
+    doc.text(nl,ML+11,y+24);
+    y+=nh+12;
+  }
+
+  // ── PHOTOS ──
+  if(bfPhotos.length||afPhotos.length){
+    doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(82,82,91);
+    doc.text('BEFORE & AFTER PHOTOS',ML,y+8);
+    y+=18;
+    const colW=(CW-10)/2, pH=108;
+    const drawCol=async(photos,sx,label)=>{
+      doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(82,82,91);
+      doc.text(label,sx,y-3);
+      if(!photos.length){
+        doc.setFillColor(17,17,21);doc.roundedRect(sx,y,colW,pH,3,3,'F');
+        doc.setFontSize(8);doc.setTextColor(63,63,70);
+        doc.text('No photos',sx+colW/2,y+pH/2,{align:'center'});return;
+      }
+      const pw2=(colW-4)/2;
+      for(let i=0;i<Math.min(photos.length,4);i++){
+        const col=i%2,row=Math.floor(i/2);
+        const px=sx+col*(pw2+4),py=y+row*(pH/2+4);
+        await new Promise(res=>{
+          const img=new Image();
+          img.onload=()=>{try{doc.addImage(img,'JPEG',px,py,pw2,pH/2-2,undefined,'FAST');}catch(e){}res();};
+          img.onerror=res;img.src=photos[i];
+        });
+      }
+    };
+    await drawCol(bfPhotos,ML,'BEFORE');
+    await drawCol(afPhotos,ML+colW+10,'AFTER');
+    y+=pH+14;
+  }
+
+  // ── SIGNATURE ──
+  if(sigData){
+    doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(82,82,91);
+    doc.text('CUSTOMER SIGNATURE',ML,y+8);
+    y+=16;
+    doc.setFillColor(17,17,21);doc.roundedRect(ML,y,CW,64,3,3,'F');
+    doc.setDrawColor(39,39,47);doc.setLineWidth(.5);doc.roundedRect(ML,y,CW,64,3,3,'S');
+    try{doc.addImage(sigData,'PNG',ML+8,y+5,148,44);}catch(e){}
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(63,63,70);
+    doc.text('Signed by '+name+' — '+dateStr,ML+8,y+58);
+    y+=74;
+  }
+
+  // ── FOOTER ──
+  const FY=PH-40;
+  doc.setFillColor(6,6,8);doc.rect(0,FY,PW,40,'F');
+  doc.setFillColor(37,99,235);doc.rect(0,FY,PW,2,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(255,255,255);
+  doc.text('WE MOVE IT.  WE REMOVE IT.  YOU RELAX.',PW/2,FY+16,{align:'center'});
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(63,63,70);
+  doc.text('256-951-1763  ·  Muscle Shoals, AL  ·  Thank you for choosing Shoals Property Services!',PW/2,FY+30,{align:'center'});
+
+  // ── SAVE ──
+  const filename='SPS-Receipt-'+name.replace(/\s+/g,'-')+'.pdf';
+  doc.save(filename);
+  toast('Receipt saved!','ok');
+  setTimeout(async()=>{
+    const blob=doc.output('blob');
+    const file=new File([blob],filename,{type:'application/pdf'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{await navigator.share({files:[file],title:'Shoals Property Services Receipt',text:'Receipt for '+name});}catch(e){}
+    }
+  },900);
+}
+
+// ── INIT ──
+document.getElementById('jobDate').value=new Date().toISOString().split('T')[0];
+document.getElementById('navBack').style.display='none';
+calcTruck();
+</script>
+</body>
+</html>
